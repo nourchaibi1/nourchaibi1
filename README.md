@@ -1,3 +1,6 @@
+# Hi, I'm Nour Chaibi 👋
+### Software Engineer passionate about AI, Cybersecurity & DevOps
+
 ## My Retro Contribution Graph 🕹️
 
 <picture>
