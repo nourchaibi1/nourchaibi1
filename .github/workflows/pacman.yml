@@ -2,8 +2,8 @@ name: generate pacman game
 
 on:
   schedule:
-    - cron: "0 0 * * *" # Runs automatically every day at midnight
-  workflow_dispatch:   # Allows manual trigger button
+    - cron: "0 0 * * *"
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -13,31 +13,32 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     
-    # Explicitly forcing high-level write privileges for the cloud runner
     permissions:
       contents: write
-      pages: write
-      id-token: write
-
-    # This environment variable forces the runner to use Node 24 and eliminates the warning
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
     steps:
       - name: checkout repo
         uses: actions/checkout@v4
 
-      # Generates the file into your workspace
       - name: generate pacman-contribution-graph.svg
         uses: abozanona/pacman-contribution-graph@main
         with:
           github_user_name: ${{ github.repository_owner }}
 
-      # Pushes the file safely to the output branch
-      - name: push pacman-contribution-graph.svg to the output branch
-        uses: crazy-max/ghaction-github-pages@v4
-        with:
-          target_branch: output
-          build_dir: .
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Deploy SVG to output branch
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          mkdir -p temp_out
+          cp -r pacman-contribution-graph.svg temp_out/ 2>/dev/null || cp -r dist/pacman-contribution-graph.svg temp_out/ 2>/dev/null || true
+          cp -r pacman-contribution-graph-dark.svg temp_out/ 2>/dev/null || cp -r dist/pacman-contribution-graph-dark.svg temp_out/ 2>/dev/null || true
+          
+          git checkout --orphan output
+          git rm -rf .
+          
+          cp -r temp_out/* .
+          rm -rf temp_out
+          git add .
+          git commit -m "Chore: Update Pac-Man contribution graph"
+          git push origin output --force
