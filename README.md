@@ -1,5 +1,5 @@
 # Hi, I'm Nour Chaibi 👋
-### Software Engineer passionate about AI, Cybersecurity & DevOps
+### Cybersecurity Engineering Student | Offensive & Defensive Security | DevSecOps | CTF Player
 
 ## 🕹️
 
